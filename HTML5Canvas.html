@@ -7,13 +7,15 @@
 </head>
 
 <body>
-  <canvas id="draw" width="800" height="800"></canvas>
+  <canvas id="draw" width="800" height="800" style="border: 1px solid black;"></canvas>
+  <h2>Color</h2>
+  <p id="color"></p>
 
   <script>
     const canvas = document.querySelector('#draw');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth / 2;
+    canvas.height = window.innerHeight / 2;
     ctx.strokeStyle = '#BADASS';
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -39,6 +41,11 @@
       if(hue >= 360){
         hue = 0;
       }
+
+      document.getElementById('color').innerHTML = hue;
+      document.getElementById('color').style = `font-size: ${hue}px`;
+
+
       if(ctx.lineWidth >= 80 || ctx.lineWidth <= 1) {
         direction = !direction;
       }
