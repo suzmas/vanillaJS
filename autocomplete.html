@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Type Ahead 👀</title>
 </head>
 <body>
@@ -9,7 +10,7 @@
 <style>
   html {
     box-sizing: border-box;
-    background:#ffc600;
+    background: rgba(216, 154, 135,.3);
     font-family:'helvetica neue';
     font-size: 20px;
     font-weight: 200;
@@ -122,8 +123,8 @@ function displayMatches() {
         <span class="name">${cityName}, ${stateName}</span>
         <span class="population">${place.population}</span>
       </li>
-      `;
-  }).join();
+      `
+  }).join("");
   suggestions.innerHTML = html;
 }
 
