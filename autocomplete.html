@@ -98,17 +98,29 @@
 
 <script>
 
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
 
 let cities = [];
+let moredata = "";
 
 fetch(endpoint)
   .then(blob => blob.json())
-  .then(data => cities.push(...data)) // spread into cities array
+  .then(data => cities.push(data)) // spread into cities array
+
+
+
 function findMatches(wordToMatch, cities) {
-  let data = fetch(`http://api.openweathermap.org/data/2.5/find?q=${wordToMatch}&type=like&mode=json`);
-  console.log(data);
-  cities.push(...data)
+  const theend = 'http://autocomplete.wunderground.com/aq?query=j';
+  let thisstuff = fetch(theend, {mode: 'cors'});
+  console.log(thisstuff);
+
+  if(cities.length > 0) {
+    let temp = cities[0].forecast.simpleforecast.forecastday[0].high.fahrenheit;
+  console.log(temp);
+  console.log('that was the temp')
+  }
+
+  console.log(cities);
   return cities.filter(place => {
     const regex = new RegExp(wordToMatch, 'gi');
     return place.city.match(regex) || place.state.match(regex);
@@ -117,9 +129,8 @@ function findMatches(wordToMatch, cities) {
 
 function displayMatches() {
   const matchArray = findMatches(this.value, cities);
-  let thisstuff =
-  fetch('http://api.wunderground.com/api/bfd0b85225329bb6/temp_f/q/CA/San_Francisco.json');
-  console.log(thisstuff);
+  // let thisstuff =
+  // fetch('http://api.wunderground.com/api/bfd0b85225329bb6/temp_f/q/CA/San_Francisco.json');
   const html = matchArray.map(place => {
     const regex = new RegExp(this.value, 'gi');
     const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
