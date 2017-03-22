@@ -106,8 +106,9 @@ fetch(endpoint)
   .then(blob => blob.json())
   .then(data => cities.push(...data)) // spread into cities array
 function findMatches(wordToMatch, cities) {
-  let data = `api.openweathermap.org/data/2.5/find?q=${wordToMatch}&type=like&mode=json`;
-  cities = [].push(...data)
+  let data = fetch(`http://api.openweathermap.org/data/2.5/find?q=${wordToMatch}&type=like&mode=json`);
+  console.log(data);
+  cities.push(...data)
   return cities.filter(place => {
     const regex = new RegExp(wordToMatch, 'gi');
     return place.city.match(regex) || place.state.match(regex);
@@ -116,6 +117,9 @@ function findMatches(wordToMatch, cities) {
 
 function displayMatches() {
   const matchArray = findMatches(this.value, cities);
+  let thisstuff =
+  fetch('http://api.wunderground.com/api/bfd0b85225329bb6/temp_f/q/CA/San_Francisco.json');
+  console.log(thisstuff);
   const html = matchArray.map(place => {
     const regex = new RegExp(this.value, 'gi');
     const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
