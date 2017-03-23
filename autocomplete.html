@@ -92,7 +92,6 @@
     <input type="text" class="search" placeholder="City or State">
     <ul class="suggestions">
       <li>Filter for a city</li>
-      <li>or a state</li>
     </ul>
   </form>
 
@@ -100,46 +99,31 @@
 
 const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
 
-function findMatches(wordToMatch) {
+function findMatches() {
 
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = "https://autocomplete.wunderground.com/aq?query=" + wordToMatch + "&cb=tellMe";
+  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=tellMe";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("location_list").innerHTML = "";
   console.log(document.getElementById("location_list"));
   document.getElementById("location_list").appendChild(s);
 
-
-  // if(cities.length > 0) {
-  //   let temp = cities[0].forecast.simpleforecast.forecastday[0].high.fahrenheit;
-  // console.log(temp);
-  // console.log('that was the temp')
-  // }
-  //
-  // console.log(cities);
-  // return cities.filter(place => {
-  //   const regex = new RegExp(wordToMatch, 'gi');
-  //   return place.city.match(regex) || place.state.match(regex);
-  // })
 }
 
-function displayMatches() {
-  const matchArray = findMatches(this.value);
+function displayMatches(matches) {
 
-  // const html = matchArray.map(place => {
-  //   const regex = new RegExp(this.value, 'gi');
-  //   const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
-  //   const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
-  //   return `
-  //     <li>
-  //       <span class="name">${cityName}, ${stateName}</span>
-  //       <span class="population">${place.population}</span>
-  //     </li>
-  //     `
-  // }).join("");
-  // suggestions.innerHTML = html;
+  const html = matches.map(place => {
+
+    return `
+      <li>
+        <span class="name">${place.name}</span>
+        <span class="population">${place.name}</span>
+      </li>
+      `
+  }).join("");
+  suggestions.innerHTML = html;
 }
 
 const searchInput = document.querySelector('.search');
@@ -150,13 +134,18 @@ function tellMe(data) {
   console.log(stuff);
   for(i=0; i<stuff.length; i++){
     console.log(stuff[i].name);
-  }
+  };
+  var newstuff = stuff.filter((location) => {
+    return location.type === "city";
+  });
+  displayMatches(newstuff);
 }
-searchInput.addEventListener('change', displayMatches);
-searchInput.addEventListener('keyup', displayMatches);
-</script>
-<div id="location_list">
 
-</div>
+searchInput.addEventListener('change', findMatches);
+searchInput.addEventListener('keyup', findMatches);
+</script>
+
+  <div id="location_list"></div>
+
   </body>
 </html>
