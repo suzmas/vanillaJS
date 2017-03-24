@@ -111,22 +111,25 @@ function findMatches() {
 }
 
 function getTemp(location) {
-  let temp = "";
   const endpoint = `http://api.wunderground.com/api/bfd0b85225329bb6/forecast${location}.json`;
+  const haha = [];
   fetch(endpoint)
     .then((resp) => resp.json())
     .then(function(data) {
-      this.temp = data.forecast.simpleforecast.forecastday[0].high.fahrenheit;
-      console.log(temp);
-      // return temp;
-    })
-  console.log("More temp" + temp);
-  return temp;
+      haha.push(data);
+      let temp = data.forecast.simpleforecast.forecastday[0].high.fahrenheit;
+      haha.push(temp);
+    });
+  return haha;
 }
 
 function displayMatches(matches) {
   const html = matches.map(place => {
-    let temp = getTemp(place.l);
+    let temp = "";
+    if (matches.length <= 5) {
+      temp = getTemp(place.l);
+      console.log(getTemp(place.l));
+    }
     return `
       <li>
         <span class="name">${place.name}</span>
