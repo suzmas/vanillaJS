@@ -111,25 +111,29 @@ function findMatches() {
 }
 
 function getTemp(location) {
-  const endpoint = `http://api.wunderground.com/api/bfd0b85225329bb6/forecast${location}.json`;
-  const haha = [];
-  fetch(endpoint)
-    .then((resp) => resp.json())
-    .then(function(data) {
-      haha.push(data);
-      let temp = data.forecast.simpleforecast.forecastday[0].high.fahrenheit;
-      haha.push(temp);
-    });
-  return haha;
+  // const endpoint = `http://api.wunderground.com/api/bfd0b85225329bb6/forecast${location}.json`;
+  // const haha = [];
+  // fetch(endpoint)
+  //   .then((resp) => resp.json())
+  //   .then(function(data) {
+  //     haha.push(data);
+  //     let temp = data.forecast.simpleforecast.forecastday[0].high.fahrenheit;
+  //     haha.push(temp);
+  //     console.log("haha is " + haha)
+  //   })
+  //   console.log(haha);
+
+  return Math.round(Math.random() * 100);
 }
 
 function displayMatches(matches) {
   const html = matches.map(place => {
-    let temp = "";
-    if (matches.length <= 5) {
-      temp = getTemp(place.l);
-      console.log(getTemp(place.l));
-    }
+    // let temp = "";
+    // if (matches.length <= 2) {
+    //   temp = getTemp(place.l);
+    //   console.log("get themp is" + getTemp(place.l));
+    // }
+    const temp = getTemp(place.l);
     return `
       <li>
         <span class="name">${place.name}</span>
