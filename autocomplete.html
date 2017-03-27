@@ -97,25 +97,28 @@
 
 <script>
 
+const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
+
 function findMatches() {
-  if(this.value.length < 3) { return }
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = `http://gd.geobytes.com/AutoCompleteCity?callback=cityList&q= + ${this.value}`;
+  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("location_list").innerHTML = "";
   document.getElementById("location_list").appendChild(s);
 }
 
-function getCityData(location) {
+function getCityData(city) {
+  const endpoint = `http://getcitydetails.geobytes.com/GetCityDetails?callback=?&latitude=${location.lat}&longitude=${location.lon}`;
+
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = `http://getcitydetails.geobytes.com/GetCityDetails?callback=cityData&fqcn=${location}`;
+  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
   s.innerHTML = null;
-  s.id = "city_src";
-  document.getElementById("location_data").innerHTML = "";
-  document.getElementById("location_data").appendChild(s);
+  s.id = "location_src";
+  document.getElementById("location_list").innerHTML = "";
+  document.getElementById("location_list").appendChild(s);
 }
 
 
@@ -124,8 +127,8 @@ function displayMatches(matches) {
 
     return `
       <li>
-        <span class="name">${place}</span>
-        <span class="population" id="${place}"></span>
+        <span class="name">${place.name}</span>
+        <span class="population">${place.lat}</span>
       </li>
       `
   }).join("");
@@ -136,17 +139,18 @@ const searchInput = document.querySelector('.search');
 const suggestions = document.querySelector('.suggestions');
 
 function cityList(data) {
-  console.log(data);
-  for(i=0; i<data.length; i++){
-    getCityData(data[i]);
+  let stuff = data.RESULTS
+  console.log(stuff);
+  for(i=0; i<stuff.length; i++){
+    console.log(stuff[i].name);
   };
-
-  displayMatches(data);
+  var newstuff = stuff.filter((location) => {
+    return location.type === "city";
+  });
+  displayMatches(newstuff);
 }
+
 function cityData(data) {
-  let stuff = data.geobytespopulation;
-  id = data.geobytesfqcn;
-  document.getElementById(id).innerHTML = stuff;
 
 }
 
@@ -155,8 +159,6 @@ searchInput.addEventListener('keyup', findMatches);
 </script>
 
   <div id="location_list"></div>
-  <div id="location_data"></div>
-
 
   </body>
 </html>
