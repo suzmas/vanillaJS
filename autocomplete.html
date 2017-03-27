@@ -100,6 +100,7 @@
 const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
 
 function findMatches() {
+  if (this.value.length < 1) { return };
   var s = document.createElement("script");
   s.type = "text/javascript";
   s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
