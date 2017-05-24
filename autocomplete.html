@@ -97,24 +97,33 @@
 
 <script>
 
-const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
-
+let cities = "";
+let ccities = "";
 function findMatches() {
-  var s = document.createElement("script");
-  s.type = "text/javascript";
-  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
-  s.innerHTML = null;
-  s.id = "location_src";
-  document.getElementById("location_list").innerHTML = "";
-  document.getElementById("location_list").appendChild(s);
+  let endpoint = `https://api.teleport.org/api/cities/?search=${this.value}`;
+  cities = [];
+  ccities = [];
+  fetch(endpoint)
+    .then(blob => blob.json())
+    .then(data => cities.push(data))
+    .then(cityList())
+
 }
 
 function getCityData(city) {
-  const endpoint = `http://getcitydetails.geobytes.com/GetCityDetails?callback=?&latitude=${location.lat}&longitude=${location.lon}`;
+  const cendpoint = city._links["city:item"].href;
+
+  fetch(cendpoint)
+    .then(blob => blob.json())
+    .then(function(data) {
+      console.log(cities[city]);
+      console.log(data.population);
+      cities[city].pop = data.population;
+    });
+
 
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("location_list").innerHTML = "";
@@ -123,35 +132,38 @@ function getCityData(city) {
 
 
 function displayMatches(matches) {
-
+  console.log(matches);
   let html = matches.map(place => {
 
     return `
       <li>
-        <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
-        <span class="population">${place.lat}</span>
+        <span class="name">${place.matching_full_name}</span>
+        <span class="population">${place.population}</span>
       </li>
       `
   }).join("");
   if (document.querySelector('.search').value.length < 1) {
     html = "<li><span>Search for Stuff!</span></li>"
   }
+  console.log(html);
   suggestions.innerHTML = html;
 }
+
+
+
 
 const searchInput = document.querySelector('.search');
 const suggestions = document.querySelector('.suggestions');
 
-function cityList(data) {
-  let stuff = data.RESULTS
+function cityList() {
+  let stuff = cities[0]._embedded["city:search-results"];
   console.log(stuff);
   for(i=0; i<stuff.length; i++){
-    console.log(stuff[i].name);
+    console.log(stuff[i].matching_full_name);
+    getCityData(stuff[i]);
   };
-  var newstuff = stuff.filter((location) => {
-    return location.type === "city";
-  });
-  displayMatches(newstuff);
+
+  displayMatches(stuff);
 }
 
 function cityData(data) {
