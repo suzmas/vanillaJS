@@ -22,12 +22,10 @@
     width: 100%;
     padding:20px;
   }
-
   .search-form {
     max-width:400px;
     margin:50px auto;
   }
-
   input.search {
     margin: 0;
     text-align: center;
@@ -42,8 +40,6 @@
     font-size: 40px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.19);
   }
-
-
   .suggestions {
     margin: 0;
     padding: 0;
@@ -62,7 +58,6 @@
     justify-content:space-between;
     text-transform: capitalize;
   }
-
   .suggestions li:nth-child(even) {
     transform: perspective(100px) rotateX(3deg) translateY(2px) scale(1.001);
     background: linear-gradient(to bottom,  #ffffff 0%,#EFEFEF 100%);
@@ -71,15 +66,12 @@
     transform: perspective(100px) rotateX(-3deg) translateY(3px);
     background: linear-gradient(to top,  #ffffff 0%,#EFEFEF 100%);
   }
-
   span.population {
     font-size: 15px;
   }
-
   .hl {
     background:#ffc600;
   }
-
   a {
     color:black;
     background:rgba(0,0,0,0.1);
@@ -96,80 +88,55 @@
   </form>
 
 <script>
-
-let cities = "";
-let ccities = "";
+const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
 function findMatches() {
-  let endpoint = `https://api.teleport.org/api/cities/?search=${this.value}`;
-  cities = [];
-  ccities = [];
-  fetch(endpoint)
-    .then(blob => blob.json())
-    .then(data => cities.push(data))
-    .then(cityList())
-
-}
-
-function getCityData(city) {
-  const cendpoint = city._links["city:item"].href;
-
-  fetch(cendpoint)
-    .then(blob => blob.json())
-    .then(function(data) {
-      console.log(cities[city]);
-      console.log(data.population);
-      cities[city].pop = data.population;
-    });
-
-
   var s = document.createElement("script");
   s.type = "text/javascript";
+  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("location_list").innerHTML = "";
   document.getElementById("location_list").appendChild(s);
 }
-
-
+function getCityData(city) {
+  const endpoint = `http://getcitydetails.geobytes.com/GetCityDetails?callback=?&latitude=${location.lat}&longitude=${location.lon}`;
+  var s = document.createElement("script");
+  s.type = "text/javascript";
+  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
+  s.innerHTML = null;
+  s.id = "location_src";
+  document.getElementById("location_list").innerHTML = "";
+  document.getElementById("location_list").appendChild(s);
+}
 function displayMatches(matches) {
-  console.log(matches);
   let html = matches.map(place => {
-
     return `
       <li>
-        <span class="name">${place.matching_full_name}</span>
-        <span class="population">${place.population}</span>
+        <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
+        <span class="population">${place.lat}</span>
       </li>
       `
   }).join("");
   if (document.querySelector('.search').value.length < 1) {
     html = "<li><span>Search for Stuff!</span></li>"
   }
-  console.log(html);
   suggestions.innerHTML = html;
 }
-
-
-
-
 const searchInput = document.querySelector('.search');
 const suggestions = document.querySelector('.suggestions');
-
-function cityList() {
-  let stuff = cities[0]._embedded["city:search-results"];
+function cityList(data) {
+  let stuff = data.RESULTS
   console.log(stuff);
   for(i=0; i<stuff.length; i++){
-    console.log(stuff[i].matching_full_name);
-    getCityData(stuff[i]);
+    console.log(stuff[i].name);
   };
-
-  displayMatches(stuff);
+  var newstuff = stuff.filter((location) => {
+    return location.type === "city";
+  });
+  displayMatches(newstuff);
 }
-
 function cityData(data) {
-
 }
-
 searchInput.addEventListener('change', findMatches);
 searchInput.addEventListener('keyup', findMatches);
 </script>
