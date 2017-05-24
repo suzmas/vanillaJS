@@ -111,11 +111,27 @@ function getCityData(city) {
   document.getElementById("location_list").appendChild(s);
 }
 
+let zoneList = [];
+const startTime = Date.now() / 1000;
+
 function getTimes(data) {
-  console.log(data);
+  let timeZones = data.zones.map(i => {
+    let zone = {
+      timeZone: i.zoneName,
+      timestampUTC: i.timestamp - i.gmtOffset,
+    };
+    return zone;
+  })
+  zoneList = timeZones;
+  for (i=0;i<4;i++){
+    calcTime(zoneList[i]);
+  }
 }
 
-function calcTime() {
+function calcTime(zone) {
+  let elapsed = (Date.now()/1000) - startTime;
+  console.log(elapsed);
+  console.log(zone.timestampUTC + elapsed);
 }
 
 
