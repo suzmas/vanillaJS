@@ -110,6 +110,7 @@ function getCityData(city) {
 }
 function displayMatches(matches) {
   let html = matches.map(place => {
+    console.log(place);
     return `
       <li>
         <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
