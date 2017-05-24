@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Type Ahead 👀</title>
+  <script src="http://api.timezonedb.com/v2/list-time-zone?key=PB75OXRDI2QG&format=json&db=getTimes"></script>
 </head>
 <body>
 
@@ -88,7 +89,8 @@
   </form>
 
 <script>
-const endpoint = 'http://api.wunderground.com/api/bfd0b85225329bb6/forecast/q/zmw:94125.1.99999.json';
+
+
 function findMatches() {
   var s = document.createElement("script");
   s.type = "text/javascript";
@@ -98,6 +100,7 @@ function findMatches() {
   document.getElementById("location_list").innerHTML = "";
   document.getElementById("location_list").appendChild(s);
 }
+
 function getCityData(city) {
   const endpoint = `http://getcitydetails.geobytes.com/GetCityDetails?callback=?&latitude=${location.lat}&longitude=${location.lon}`;
   var s = document.createElement("script");
@@ -108,9 +111,17 @@ function getCityData(city) {
   document.getElementById("location_list").innerHTML = "";
   document.getElementById("location_list").appendChild(s);
 }
+
+function getTimes(data) {
+  console.log(data);
+}
+
+function calcTime() {
+}
+
+
 function displayMatches(matches) {
   let html = matches.map(place => {
-    console.log(place);
     return `
       <li>
         <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
@@ -123,8 +134,10 @@ function displayMatches(matches) {
   }
   suggestions.innerHTML = html;
 }
+
 const searchInput = document.querySelector('.search');
 const suggestions = document.querySelector('.suggestions');
+
 function cityList(data) {
   let stuff = data.RESULTS
   console.log(stuff);
@@ -136,10 +149,11 @@ function cityList(data) {
   });
   displayMatches(newstuff);
 }
-function cityData(data) {
-}
+
+
 searchInput.addEventListener('change', findMatches);
 searchInput.addEventListener('keyup', findMatches);
+
 </script>
 
   <div id="location_list"></div>
