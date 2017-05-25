@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <title>Type Ahead 👀</title>
 </head>
 <body>
@@ -81,9 +82,9 @@
   <!-- end styling -->
 
   <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
+    <input type="text" class="search" placeholder="search cities">
     <ul class="suggestions">
-      <li>Filter for a city</li>
+      <li><i style="margin:auto"></i></li>
     </ul>
   </form>
 
@@ -123,7 +124,6 @@ function getTimes(data) {
     return zone;
   })
   zoneList = timeZones;
-  console.log(zoneList);
 }
 
 function calcTime(zone) {
@@ -140,7 +140,11 @@ function calcTime(zone) {
   minute = minute < 10 ?
     `0${minute}` : minute.toString()
 
-  return `${hour}:${minute}`
+  let second = date.getUTCSeconds().toString();
+  second = second < 10 ?
+    `0${second}` : second.toString()
+
+  return `${hour}:${minute}:${second}`
 }
 
 function getZoneMatch(place) {
