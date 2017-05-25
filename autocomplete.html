@@ -114,6 +114,7 @@ function getCityData(city) {
 
 let zoneList = [];
 const startTime = Date.now();
+let timeHour = '';
 
 function getTimes(data) {
   let timeZones = data.zones.map(i => {
@@ -133,6 +134,7 @@ function calcTime(zone) {
   const date = new Date(currentTime);
 
   let hour = date.getUTCHours();
+  timeHour = hour;
   hour = hour > 12 ?
     (hour-12).toString() : hour.toString()
 
@@ -140,11 +142,7 @@ function calcTime(zone) {
   minute = minute < 10 ?
     `0${minute}` : minute.toString()
 
-  let second = date.getUTCSeconds().toString();
-  second = second < 10 ?
-    `0${second}` : second.toString()
-
-  return `${hour}:${minute}:${second}`
+  return `${hour}:${minute}`
 }
 
 function getZoneMatch(place) {
@@ -155,13 +153,21 @@ function getZoneMatch(place) {
   return time;
 }
 
+function timeIcon() {
+  if (timeHour > 20) { return '🌚'}
+  if (timeHour > 12) { return '🌞'}
+  if (timeHour > 6) { return '🌥'}
+  return '🌜'
+}
+
 function displayMatches(matches) {
   let html = matches.map(place => {
     let time = getZoneMatch(place);
+    let icon = timeIcon();
     return `
       <li>
         <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
-        <span class="population">${time}</span>
+        <span class="population">${time} ${icon}</span>
       </li>
       `
   }).join("");
@@ -192,9 +198,9 @@ searchInput.addEventListener('keyup', findMatches);
 
 </script>
 
-  <script src="http://api.timezonedb.com/v2/list-time-zone?key=PB75OXRDI2QG&format=json&callback=getTimes"></script>
+<div id="location_list"></div>
 
-  <div id="location_list"></div>
+<script src="http://api.timezonedb.com/v2/list-time-zone?key=PB75OXRDI2QG&format=json&callback=getTimes"></script>
 
   </body>
 </html>
