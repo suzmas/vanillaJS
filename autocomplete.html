@@ -112,13 +112,14 @@ function getCityData(city) {
 }
 
 let zoneList = [];
-const startTime = Date.now() / 1000;
+const startTime = Date.now();
 
 function getTimes(data) {
+  console.log(data);
   let timeZones = data.zones.map(i => {
     let zone = {
       timeZone: i.zoneName,
-      timestampUTC: i.timestamp - i.gmtOffset,
+      timestampUTC: (i.timestamp * 1000),
     };
     return zone;
   })
@@ -129,11 +130,21 @@ function getTimes(data) {
 }
 
 function calcTime(zone) {
-  let elapsed = (Date.now()/1000) - startTime;
-  console.log(elapsed);
-  console.log(zone.timestampUTC + elapsed);
-}
+  const elapsed = Date.now() - startTime;
 
+  const currentTime = zone.timestampUTC + elapsed;
+  const date = new Date(currentTime);
+
+  let hour = date.getUTCHours();
+  hour = hour > 12 ?
+    (hour-12).toString() : hour.toString()
+
+  let minute = date.getUTCMinutes();
+  minute = minute < 10 ?
+    `0${minute}` : minute.toString()
+
+  return `${hour}:${minute}`
+}
 
 function displayMatches(matches) {
   let html = matches.map(place => {
