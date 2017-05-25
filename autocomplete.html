@@ -115,7 +115,6 @@ let zoneList = [];
 const startTime = Date.now();
 
 function getTimes(data) {
-  console.log(data);
   let timeZones = data.zones.map(i => {
     let zone = {
       timeZone: i.zoneName,
@@ -124,9 +123,7 @@ function getTimes(data) {
     return zone;
   })
   zoneList = timeZones;
-  for (i=0;i<4;i++){
-    calcTime(zoneList[i]);
-  }
+  console.log(zoneList);
 }
 
 function calcTime(zone) {
@@ -146,12 +143,21 @@ function calcTime(zone) {
   return `${hour}:${minute}`
 }
 
+function getZoneMatch(place) {
+  const tz = zoneList.findIndex(function(elem, i, arr) {
+    return elem.timeZone === place.tz;
+  })
+  let time = tz > 0 ? calcTime(zoneList[tz]) : 'Not Found'
+  return time;
+}
+
 function displayMatches(matches) {
   let html = matches.map(place => {
+    let time = getZoneMatch(place);
     return `
       <li>
         <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
-        <span class="population">${place.lat}</span>
+        <span class="population">${time}</span>
       </li>
       `
   }).join("");
