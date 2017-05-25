@@ -147,10 +147,10 @@ function getZoneMatch(place) {
 
 // use diff emoji based on rough time of day
 function timeIcon() {
-  if (timeHour > 20) { return '🌚'}
-  if (timeHour > 12) { return '🌞'}
-  if (timeHour > 6) { return '🌥'}
-  return '🌜'
+  if (timeHour > 20) { return 'PM 🌚'}
+  if (timeHour > 12) { return 'PM 🌞'}
+  if (timeHour > 6) { return 'AM 🌥'}
+  return 'AM 🌜'
 }
 
 function displayMatches(matches) {
