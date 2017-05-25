@@ -101,26 +101,15 @@ function findMatches() {
   document.getElementById("location_list").appendChild(s);
 }
 
-function getCityData(city) {
-  const endpoint = `http://getcitydetails.geobytes.com/GetCityDetails?callback=?&latitude=${location.lat}&longitude=${location.lon}`;
-  var s = document.createElement("script");
-  s.type = "text/javascript";
-  s.src = "https://autocomplete.wunderground.com/aq?query=" + this.value + "&cb=cityList";
-  s.innerHTML = null;
-  s.id = "location_src";
-  document.getElementById("location_list").innerHTML = "";
-  document.getElementById("location_list").appendChild(s);
-}
-
 let zoneList = [];
-const startTime = Date.now();
+const startTime = Date.now(); // save time at page load
 let timeHour = '';
 
 function getTimes(data) {
   let timeZones = data.zones.map(i => {
     let zone = {
       timeZone: i.zoneName,
-      timestampUTC: (i.timestamp * 1000),
+      timestampUTC: (i.timestamp * 1000), // convert sec to millisec
     };
     return zone;
   })
@@ -128,13 +117,15 @@ function getTimes(data) {
 }
 
 function calcTime(zone) {
+  // control for time elapsed since timezone timestamps were loaded
   const elapsed = Date.now() - startTime;
-
   const currentTime = zone.timestampUTC + elapsed;
+
   const date = new Date(currentTime);
 
   let hour = date.getUTCHours();
-  timeHour = hour;
+  timeHour = hour; // set global timeHour var for icon creation
+  if (hour === 0) { hour = 12 } // control for midnight
   hour = hour > 12 ?
     (hour-12).toString() : hour.toString()
 
@@ -146,13 +137,15 @@ function calcTime(zone) {
 }
 
 function getZoneMatch(place) {
-  const tz = zoneList.findIndex(function(elem, i, arr) {
+  const zoneIndex = zoneList.findIndex((elem, i, arr) => {
     return elem.timeZone === place.tz;
   })
-  let time = tz > 0 ? calcTime(zoneList[tz]) : 'Not Found'
-  return time;
+  let timeString = zoneIndex > 0 ? calcTime(zoneList[zoneIndex]) : 'Not Found'
+
+  return timeString;
 }
 
+// use diff emoji based on rough time of day
 function timeIcon() {
   if (timeHour > 20) { return '🌚'}
   if (timeHour > 12) { return '🌞'}
@@ -162,8 +155,8 @@ function timeIcon() {
 
 function displayMatches(matches) {
   let html = matches.map(place => {
-    let time = getZoneMatch(place);
-    let icon = timeIcon();
+    const time = getZoneMatch(place);
+    const icon = timeIcon();
     return `
       <li>
         <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
@@ -171,6 +164,7 @@ function displayMatches(matches) {
       </li>
       `
   }).join("");
+  // set li display item when user clears input field
   if (document.querySelector('.search').value.length < 1) {
     html = "<li><span>Search for Stuff!</span></li>"
   }
@@ -181,15 +175,12 @@ const searchInput = document.querySelector('.search');
 const suggestions = document.querySelector('.suggestions');
 
 function cityList(data) {
-  let stuff = data.RESULTS
-  console.log(stuff);
-  for(i=0; i<stuff.length; i++){
-    console.log(stuff[i].name);
-  };
-  var newstuff = stuff.filter((location) => {
+  //  only return results for locations of type 'city'
+  let matches = data.RESULTS;
+  const cityMatches = matches.filter((location) => {
     return location.type === "city";
   });
-  displayMatches(newstuff);
+  displayMatches(cityMatches);
 }
 
 
