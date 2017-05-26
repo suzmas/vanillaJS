@@ -1,6 +1,3 @@
-<p> Repos url: https://api.github.com/users/suzmas/repos</p>
-<p> Lang url: https://api.github.com/repos/suzmas/AFrame/languages </p>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,9 +94,9 @@
 
 <script>
 
-let user = "";
 let repositories = "";
 let languages = {};
+let currentCount = 0;
 let example = {
   CSS: 634088,
   Crystal: 28668,
@@ -116,7 +113,7 @@ let example = {
 }
 
 function getRepos() {
-  user = this.value;
+  user = searchInput.value;
   var s = document.createElement("script");
   s.type = "text/javascript";
   s.src = "https://api.github.com/users/" + user + "/repos?secret_key=5c39fd91a4be7f85cba31791412257aace044ef7&callback=handleRepos";
@@ -146,22 +143,23 @@ function handleRepos(data) {
 }
 
 function handleLanguages(data) {
+  currentCount += 1;
   Object.entries(data.data).forEach(([key, value]) => {
     console.log(key);
     languages[key] ? languages[key] += value : languages[key] = value
   })
-  console.log(languages);
-  calcLanguages;
+  console.log(currentCount);
+  console.log(repositories.length);
+  if (currentCount === repositories.length) { calcLanguages() }
 }
 
 function calcLanguages() {
-  console.log(searchInput.value);
-  let total = Object.values(example).reduce(
+  let total = Object.values(languages).reduce(
     (acc, cur) => acc + cur,
     0
   );
   let calculated =
-    Object.entries(example).map(([key, value]) => {
+    Object.entries(languages).map(([key, value]) => {
       let percent = (value/total)*100;
       return `${key}: ${percent}%`
     })
@@ -169,7 +167,6 @@ function calcLanguages() {
 }
 
 const suggestions = document.querySelector('.suggestions');
-
 
 function displayLanguages(data) {
   let html = data.map(lang => {
@@ -185,10 +182,9 @@ function displayLanguages(data) {
   suggestions.innerHTML = html;
 }
 
-
 const searchButton = document.querySelector('.searchButton');
 const searchInput = document.querySelector('.search');
-searchButton.addEventListener('click', calcLanguages, false);
+searchButton.addEventListener('click', getRepos, false);
 
 </script>
 
