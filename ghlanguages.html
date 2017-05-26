@@ -82,11 +82,14 @@
     background:rgba(0,0,0,0.1);
     text-decoration: none;
   }
+  .searchButton {
+    border: 2px solid black;
+  }
   </style>
   <!-- end styling -->
-
+  <div class="searchButton">Search!</div>
   <form class="search-form">
-    <input type="text" class="search" placeholder="search cities">
+    <input type="text" class="search" placeholder="search users">
     <ul class="suggestions">
       <li><p style="margin:auto">👀 👀 👀</p></li>
     </ul>
@@ -97,13 +100,26 @@
 let user = "";
 let repositories = "";
 let languages = {};
-
+let example = {
+  CSS: 634088,
+  Crystal: 28668,
+  HTML: 1108,
+  Java: 40524,
+  JavaScript: 88498,
+  Makefile: 678,
+  ObjectiveC: 1336890,
+  PHP: 13212,
+  Python: 3076128,
+  Ruby: 2188,
+  Shell: 520,
+  Swift: 398572,
+}
 
 function getRepos() {
   user = this.value;
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = "https://api.github.com/users/" + user + "/repos?callback=handleRepos";
+  s.src = "https://api.github.com/users/" + user + "/repos?secret_key=5c39fd91a4be7f85cba31791412257aace044ef7&callback=handleRepos";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("repo_list").innerHTML = "";
@@ -113,7 +129,7 @@ function getRepos() {
 function getLanguages(repo) {
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = "https://api.github.com/repos/"+ user + "/" + repo + "/languages?callback=handleLanguages";
+  s.src = "https://api.github.com/repos/"+ user + "/" + repo + "/languages?secret_key=5c39fd91a4be7f85cba31791412257aace044ef7&callback=handleLanguages";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("lang_list").innerHTML = "";
@@ -130,80 +146,49 @@ function handleRepos(data) {
 }
 
 function handleLanguages(data) {
-  Object.entries(data).forEach(([key, value]) => {
+  Object.entries(data.data).forEach(([key, value]) => {
     console.log(key);
-    languages.key ? languages.key += value : languages.key = value
+    languages[key] ? languages[key] += value : languages[key] = value
   })
   console.log(languages);
+  calcLanguages;
 }
 
-let zoneList = [];
-const startTime = Date.now(); // save time at page load
-let timeHour = '';
-
-function getTimes(data) {
-  let timeZones = data.zones.map(i => {
-    let zone = {
-      timeZone: i.zoneName,
-      timestampUTC: (i.timestamp * 1000), // convert sec to millisec
-    };
-    return zone;
-  })
-  zoneList = timeZones;
+function calcLanguages() {
+  console.log(searchInput.value);
+  let total = Object.values(example).reduce(
+    (acc, cur) => acc + cur,
+    0
+  );
+  let calculated =
+    Object.entries(example).map(([key, value]) => {
+      let percent = (value/total)*100;
+      return `${key}: ${percent}%`
+    })
+  displayLanguages(calculated);
 }
 
-function calcTime(zone) {
-  // control for time elapsed since timezone timestamps were loaded
-  const elapsed = Date.now() - startTime;
-  const currentTime = zone.timestampUTC + elapsed;
+const suggestions = document.querySelector('.suggestions');
 
-  const date = new Date(currentTime);
 
-  let hour = date.getUTCHours();
-  timeHour = hour; // set global timeHour var for icon creation
-  if (hour === 0) { hour = 12 } // control for midnight
-  hour = hour > 12 ?
-    (hour-12).toString() : hour.toString()
-
-  let minute = date.getUTCMinutes();
-  minute = minute < 10 ?
-    `0${minute}` : minute.toString()
-
-  return `${hour}:${minute}`
-}
-
-function getZoneMatch(place) {
-  const zoneIndex = zoneList.findIndex((elem, i, arr) => {
-    return elem.timeZone === place.tz;
-  })
-  let timeString = zoneIndex > 0 ? calcTime(zoneList[zoneIndex]) : 'Not Found'
-
-  return timeString;
-}
-
-function displayMatches(matches) {
-  let html = matches.map(place => {
-    // const time = getZoneMatch(place);
-    // const icon = timeIcon();
+function displayLanguages(data) {
+  let html = data.map(lang => {
     return `
       <li>
-        <span class="name"><a href="http://www.wunderground.com${place.l}">${place.name}</a></span>
-        <span class="population">${time} ${icon}</span>
-      </li>
-      `
+        <span class="name">${lang}</span>
+      </li>  `
   }).join("");
   // set li display item when user clears input field
-  if (document.querySelector('.search').value.length < 1) {
-    html = "<li><span>Search for Stuff!</span></li>"
-  }
+  // if (document.querySelector('.search').value.length < 1) {
+  //   html = "<li><span>Search for People!</span></li>"
+  // }
   suggestions.innerHTML = html;
 }
 
-const searchInput = document.querySelector('.search');
-const suggestions = document.querySelector('.suggestions');
 
-searchInput.addEventListener('change', getRepos);
-searchInput.addEventListener('keyup', getRepos);
+const searchButton = document.querySelector('.searchButton');
+const searchInput = document.querySelector('.search');
+searchButton.addEventListener('click', calcLanguages, false);
 
 </script>
 
