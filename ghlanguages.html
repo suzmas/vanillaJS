@@ -116,7 +116,7 @@ function getRepos() {
   user = searchInput.value;
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = "https://api.github.com/users/" + user + "/repos?secret_key=5c39fd91a4be7f85cba31791412257aace044ef7&callback=handleRepos";
+  s.src = "https://api.github.com/users/" + user + "/repos?callback=handleRepos";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("repo_list").innerHTML = "";
@@ -126,7 +126,7 @@ function getRepos() {
 function getLanguages(repo) {
   var s = document.createElement("script");
   s.type = "text/javascript";
-  s.src = "https://api.github.com/repos/"+ user + "/" + repo + "/languages?secret_key=5c39fd91a4be7f85cba31791412257aace044ef7&callback=handleLanguages";
+  s.src = "https://api.github.com/repos/"+ user + "/" + repo + "/languages?callback=handleLanguages";
   s.innerHTML = null;
   s.id = "location_src";
   document.getElementById("lang_list").innerHTML = "";
@@ -143,13 +143,10 @@ function handleRepos(data) {
 }
 
 function handleLanguages(data) {
-  currentCount += 1;
+  currentCount++;
   Object.entries(data.data).forEach(([key, value]) => {
-    console.log(key);
     languages[key] ? languages[key] += value : languages[key] = value
   })
-  console.log(currentCount);
-  console.log(repositories.length);
   if (currentCount === repositories.length) { calcLanguages() }
 }
 
@@ -159,7 +156,9 @@ function calcLanguages() {
     0
   );
   let calculated =
-    Object.entries(languages).map(([key, value]) => {
+    Object.entries(languages).sort(function(a, b) {
+      return b[1] - a[1];
+    }).map(([key, value]) => {
       let percent = (value/total)*100;
       return `${key}: ${percent}%`
     })
