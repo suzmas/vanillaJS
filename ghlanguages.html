@@ -151,6 +151,7 @@ function handleLanguages(data) {
 }
 
 function calcLanguages() {
+  let values = [];
   let total = Object.values(languages).reduce(
     (acc, cur) => acc + cur,
     0
@@ -160,9 +161,13 @@ function calcLanguages() {
       return b[1] - a[1];
     }).map(([key, value]) => {
       let percent = (value/total)*100;
+      if (percent > 0) {
+        values.push(percent)
+      }
       return `${key}: ${percent}%`
     })
   displayLanguages(calculated);
+  mkSvg(values);
 }
 
 const suggestions = document.querySelector('.suggestions');
@@ -174,10 +179,7 @@ function displayLanguages(data) {
         <span class="name">${lang}</span>
       </li>  `
   }).join("");
-  // set li display item when user clears input field
-  // if (document.querySelector('.search').value.length < 1) {
-  //   html = "<li><span>Search for People!</span></li>"
-  // }
+
   suggestions.innerHTML = html;
 }
 
@@ -190,32 +192,23 @@ searchButton.addEventListener('click', getRepos, false);
 <div id="repo_list"></div>
 <div id="lang_list"></div>
 
-<svg width="100%" height="100%" viewBox="0 0 42 42" class="donut">
-  <!-- <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#fff"></circle>
-  <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#d2d3d4" stroke-width="3"></circle>
-
-  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ce4b99" stroke-width="3" stroke-dasharray="40 60" stroke-dashoffset="25"></circle>
-  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#b1c94e" stroke-width="3" stroke-dasharray="20 80" stroke-dashoffset="85"></circle>
-  <circle class="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#377bbc" stroke-width="3" stroke-dasharray="30 70" stroke-dashoffset="65"></circle> -->
-  <!-- unused 10% -->
-</svg>
+<svg width="100%" height="100%" viewBox="0 0 42 42" class="donut"></svg>
 
 <script>
+function mkSvg(data) {
   let svg = document.querySelector(".donut");
-  let langs = [20, 20, 35, 35];
-  let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9"]
+  let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#fff", "#ec693e", "#45ee5e"];
   let offset = 0;
-  let svgContent = langs.map((item, index) => {
+  let svgContent = data.map((item, index) => {
     let dashoffset = offset;
     offset+=item;
-    console.log(offset);
 
     return (
-      `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item} ${100-item}" stroke-dashoffset="${dashoffset}"></circle>`
+      `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item} ${100-item}" stroke-dashoffset="${100-dashoffset}"></circle>`
     )
   })
   svg.innerHTML = svgContent;
-
+}
 </script>
 
   </body>
