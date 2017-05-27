@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Find the time in any city in the world quickly and easily. Compare times in different cities. Find the weather for any city in the world.">
 
-  <title>Current Time by City</title>
+  <title>What Did You Commit?</title>
 </head>
 <body>
 
@@ -82,8 +82,22 @@
   .searchButton {
     border: 2px solid black;
   }
+  .chart-text {
+    font-size: 16px/1.4em;
+    fill: #000;
+    -moz-transform: translateY(0.25em);
+    -ms-transform: translateY(0.25em);
+    -webkit-transform: translateY(0.25em);
+    transform: translateY(0.25em);
+  }
+  .chart-label {
+    font-size: 0.2em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
   </style>
   <!-- end styling -->
+
   <div class="searchButton">Search!</div>
   <form class="search-form">
     <input type="text" class="search" placeholder="search users">
@@ -97,6 +111,7 @@
 let repositories = "";
 let languages = {};
 let currentCount = 0;
+let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#ec693e", "#45ee5e"];
 let example = {
   CSS: 634088,
   Crystal: 28668,
@@ -161,7 +176,7 @@ function calcLanguages() {
       return b[1] - a[1];
     }).map(([key, value]) => {
       let percent = (value/total)*100;
-      if (percent > 0) {
+      if (percent > 1) {
         values.push(percent)
       }
       return `${key}: ${percent}%`
@@ -197,16 +212,21 @@ searchButton.addEventListener('click', getRepos, false);
 <script>
 function mkSvg(data) {
   let svg = document.querySelector(".donut");
-  let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#fff", "#ec693e", "#45ee5e"];
   let offset = 0;
   let svgContent = data.map((item, index) => {
     let dashoffset = offset;
     offset+=item;
-
     return (
       `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item} ${100-item}" stroke-dashoffset="${100-dashoffset}"></circle>`
     )
   })
+  svgContent.push(
+    `<g class="chart-text">
+      <text x="50%" y="50%" class="chart-label">
+        ${searchInput.value}
+      </text>
+    </g>`
+  )
   svg.innerHTML = svgContent;
 }
 </script>
