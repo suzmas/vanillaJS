@@ -107,18 +107,22 @@ function mkSvg(data) {
     )
   }));
   svgContent.push(
-    `<g class="chart-text">
-      <text x="50%" y="50%" class="chart-number">
-        ${Math.round(data[0])}
-      </text>
-      <text x="50%" y="50%" class="chart-label">
-        <a href="http://www.github.com/${searchInput.value}">${searchInput.value}</a>
-      </text>
-    </g>`
+    mkSvgText(data[0].toFixed(1), (searchInput.value))
   )
   svg.innerHTML = (svgContent.join(""));
 }
 
+function mkSvgText(num, label) {
+  return (
+  `<g class="chart-text">
+    <text x="50%" y="50%" class="chart-number">
+      ${num}
+    </text>
+    <text x="50%" y="50%" class="chart-label">
+      <a href="http://www.github.com/${searchInput.value}">${label}</a>
+    </text>
+  </g>`
+)}
 
 // TESTING
 // use for working on formatting without exhausting API limit

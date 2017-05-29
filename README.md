@@ -1,3 +1,3 @@
 # vanillaJS
 
-Vanilla Javascript exercises and widget
+Vanilla Javascript content
