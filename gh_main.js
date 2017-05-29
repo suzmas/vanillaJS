@@ -6,6 +6,14 @@ let languages = {};
 let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#ec693e", "#45ee5e"];
 
 
+
+function validate() {
+  let val = searchInput.value.trim();
+  if (val.length > 0 && !val.includes(' ')) {
+  getRepos() };
+  return false;
+}
+
 function getRepos() {
   user = searchInput.value;
   var s = document.createElement("script");
@@ -83,18 +91,10 @@ function displayLanguages(data) {
   suggestions.innerHTML = html;
 }
 
-const searchButton = document.querySelector('.searchButton');
 const searchInput = document.querySelector('.search');
-// searchButton.addEventListener('click', getRepos, false);
-
-
-function validate() {
-  getRepos();
-  return false;
-}
 
 let svgContent =
-    [ `<circle class="donut-hole" cx="21" cy="21" r="16" fill="#fff"></circle>`,`<circle class="donut-ring" cx="21" cy="21" r="16" fill="transparent" stroke="#d2d3d4" stroke-width="3" role="presentation"></circle>` ]
+    [ `<circle class="donut-hole" cx="21" cy="21" r="16" fill="#fff"></circle>`,`<circle class="donut-ring" cx="21" cy="21" r="16" fill="transparent" stroke="#d2d3d4" stroke-width="3" role="presentation"></circle>` ];
 
 function mkSvg(data) {
   let svg = document.querySelector(".donut");
