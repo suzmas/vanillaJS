@@ -7,6 +7,7 @@ let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#ec693e", "#45ee5e"];
 
 
 function getRepos() {
+  console.log("get repos");
   user = searchInput.value;
   var s = document.createElement("script");
   s.type = "text/javascript";
@@ -42,7 +43,6 @@ function handleRepos(data) {
 // accumulate bytes of each language from each repo
 function handleLanguages(data) {
   repoCount -= 1;
-  console.log(data.meta.X-RateLimit-Remaining);
   Object.entries(data.data).forEach(([key, value]) => {
     languages[key] ? languages[key] += value : languages[key] = value
   })
@@ -87,6 +87,13 @@ function displayLanguages(data) {
 const searchButton = document.querySelector('.searchButton');
 const searchInput = document.querySelector('.search');
 // searchButton.addEventListener('click', getRepos, false);
+
+// document.getElementById("searchForm").onsubmit = console.log(document.searchForm.username.value)
+
+function validate() {
+  getRepos();
+  return false;
+}
 
 let svgContent =
     [ `<circle class="donut-hole" cx="21" cy="21" r="16" fill="#fff"></circle>`,`<circle class="donut-ring" cx="21" cy="21" r="16" fill="transparent" stroke="#d2d3d4" stroke-width="3" role="presentation"></circle>` ]

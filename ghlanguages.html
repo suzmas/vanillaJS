@@ -12,8 +12,9 @@
 <body>
 
   <div class="searchButton">Search!</div>
-  <form class="search-form">
-    <input type="text" class="search" placeholder="search users">
+  <form class="search-form" name="searchForm" onsubmit="return validate()">
+    <input type="text" class="search" placeholder="search users" name="username">
+    <input type="submit">
     <ul class="suggestions">
       <li><p style="margin:auto">👀 👀 👀</p></li>
     </ul>
