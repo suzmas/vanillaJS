@@ -10,7 +10,7 @@ let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#ec693e", "#45ee5e"];
 function validate() {
   let val = searchInput.value.trim();
   if (val.length > 0 && !val.includes(' ')) {
-  tester() };
+  getRepos() };
   return false;
 }
 
@@ -103,7 +103,7 @@ function mkSvg(data) {
     let dashoffset = offset;
     offset+=item[1];
     return (
-      `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item[1]} ${100-item[1]}" stroke-dashoffset="${100-dashoffset}" data-name="${item[0]}" data-value="${item[1].toFixed(1)}"></circle>`
+      `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item[1]} ${100-item[1]}" stroke-dashoffset="${100-dashoffset}" pointer-events="stroke" data-name="${item[0]}" data-value="${item[1].toFixed(1)}"></circle>`
     )
   }));
   svgContent.push(
@@ -134,7 +134,7 @@ function svgClickListener() {
 }
 
 function updateSvgText() {
-  document.querySelector('.chart-number').innerHTML = this.dataset.value;
+  document.querySelector('.chart-number').innerHTML = `${this.dataset.value}%`;
   document.querySelector('.chart-label').innerHTML = this.dataset.name;
 }
 
