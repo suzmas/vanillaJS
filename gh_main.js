@@ -10,7 +10,7 @@ let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#ec693e", "#45ee5e"];
 function validate() {
   let val = searchInput.value.trim();
   if (val.length > 0 && !val.includes(' ')) {
-  getRepos() };
+  tester() };
   return false;
 }
 
@@ -70,7 +70,7 @@ function calcLanguages(langs) {
     }).map(([key, value]) => {
       let percent = (value/total)*100;
       if (percent > 1) {
-        values.push(percent)
+        values.push([key, percent])
       }
       return `${key}: ${percent.toFixed(1)}%`
     })
@@ -101,15 +101,16 @@ function mkSvg(data) {
   let offset = 0;
   svgContent.push(data.map((item, index) => {
     let dashoffset = offset;
-    offset+=item;
+    offset+=item[1];
     return (
-      `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item} ${100-item}" stroke-dashoffset="${100-dashoffset}"></circle>`
+      `<circle class="donut-segment" cx="21" cy="21" r="16" fill="transparent" stroke="${colors[index]}" stroke-width="3" stroke-dasharray="${item[1]} ${100-item[1]}" stroke-dashoffset="${100-dashoffset}" data-name="${item[0]}" data-value="${item[1].toFixed(1)}"></circle>`
     )
   }));
   svgContent.push(
-    mkSvgText(data[0].toFixed(1), (searchInput.value))
+    mkSvgText(100, (searchInput.value))
   )
   svg.innerHTML = (svgContent.join(""));
+  svgClickListener();
 }
 
 function mkSvgText(num, label) {
@@ -123,6 +124,19 @@ function mkSvgText(num, label) {
     </text>
   </g>`
 )}
+
+function svgClickListener() {
+  let segments = document.querySelectorAll('.donut-segment');
+  console.log(segments);
+  for (let i=0; i<segments.length; i++) {
+    segments[i].addEventListener('click', updateSvgText);
+  }
+}
+
+function updateSvgText() {
+  document.querySelector('.chart-number').innerHTML = this.dataset.value;
+  document.querySelector('.chart-label').innerHTML = this.dataset.name;
+}
 
 // TESTING
 // use for working on formatting without exhausting API limit
