@@ -1,13 +1,12 @@
 
 
-
+let user = '';
 let repoCount = 0;
 let languages = {};
 let colors = ["#177efe", "#b1c94e", "#ce4b99", "#263ec9", "#ec693e", "#45ee5e"];
 
 
 function getRepos() {
-  console.log("get repos");
   user = searchInput.value;
   var s = document.createElement("script");
   s.type = "text/javascript";
@@ -65,7 +64,7 @@ function calcLanguages(langs) {
       if (percent > 1) {
         values.push(percent)
       }
-      return `${key}: ${percent.toFixed(2)}%`
+      return `${key}: ${percent.toFixed(1)}%`
     })
   displayLanguages(calculated);
   mkSvg(values);
@@ -88,7 +87,6 @@ const searchButton = document.querySelector('.searchButton');
 const searchInput = document.querySelector('.search');
 // searchButton.addEventListener('click', getRepos, false);
 
-// document.getElementById("searchForm").onsubmit = console.log(document.searchForm.username.value)
 
 function validate() {
   getRepos();
@@ -140,7 +138,6 @@ let example = {
   Swift: 398572,
 }
 
-searchButton.addEventListener('click', tester, false);
 function tester() {
   calcLanguages(example);
 }
